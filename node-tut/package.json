@@ -4,6 +4,7 @@
   "description": "Nodetutorial",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -12,6 +13,7 @@
   "author": "Sudhir Gupta",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "colors": "^1.4.0",
     "express": "^4.18.2",
     "mongodb": "^5.6.0",
