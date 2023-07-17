@@ -1,5 +1,8 @@
 const express = require('express');
-const {getApi,postApi,putApi,deleteApi,searchApi,Loginapi,sendMail,ForgotPassword,generateotp,Verifyotp,authenticateToken} = require('../controller/apicontroller')
+const multer = require('multer');
+const upload = multer();
+
+const {getApi,postApi,putApi,deleteApi,searchApi,Loginapi,sendMail,ForgotPassword,generateotp,Verifyotp,authenticateToken,Fileupload} = require('../controller/apicontroller')
 
 const app = express();
 require('../config')
@@ -25,7 +28,7 @@ app.route("/reset-password").put(authenticateToken,(ForgotPassword))
 app.route("/generate-otp").post(generateotp)
 app.route("/verify-otp").post(Verifyotp)
 // app.route("/sendmail").post(sendMail)
-// app.route('/forgot').post(changePassword)
+app.route('/upload').post(upload.single("file"), Fileupload)
 module.exports = app;
 
 

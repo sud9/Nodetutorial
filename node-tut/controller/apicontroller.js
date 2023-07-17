@@ -1,19 +1,24 @@
 const product = require('../product')
 const OTPschema = require('../Otpschema')
 const ResetSchema =require('../Resetpasswordschema')
+const Fileschema = require('../fileuploadschema')
 const nodemailer = require("nodemailer");
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken');
 const otpgenerator = require("otp-generator");
-
+const multer = require('multer');
 const twilo = require("twilio");
-const Otpschema = require('../Otpschema');
+
+
 
 const accountSid = "AC29a5c3b6e5f872a8100f2e11f5e8f4c6"
 const authToken = "e52cce3cba864379a9b071647b45356c"
 const twilophonenumber = "+15005550006"
 const expiryTimestamp = new Date();
 const secretKey = 'your-secret-key';
+
+
+
 expiryTimestamp.setMinutes(expiryTimestamp.getMinutes())
 // const expiryTime = new Date(Date.now() + otpExpirySecond *1000)
 
@@ -37,10 +42,31 @@ function authenticateToken(req, res, next) {
 //     res.json({ message: 'You are authorized to access this route' });
 //   });
 
+const Fileupload = async (req,resp)=>{
+   
+    const { originalname, mimetype, buffer } = req.file;
+    const newImage = new Fileschema({
+        originalName: originalname,
+        mimeType: mimetype,
+        data: buffer,
+      });
+
+      try {
+        // Save the file to MongoDB
+        await newImage.save();
+        resp.send({message:'File uploaded and saved to MongoDB'});
+       
+      } catch (error) {
+        console.error(error);
+        resp.status(500).send('Error saving file to database');
+      }
+}
+
+
 const ForgotPassword = async(req,resp)=>{
    const {email,newpassword,oldpassword} = req.body
 //    const token= req.headers
-   const token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NGFiYWQxYzJmNDhjOTE5ZTM2MjRjM2IiLCJuYW1lIjoiQXphbSIsImVtYWlsIjoiYXphbWtoYW01MjUzQGdtYWlsLmNvbSIsInBob25lIjo4Njg2ODY4Njg2OCwiaWF0IjoxNjg4OTcyNzM0LCJleHAiOjE2ODg5NzYzMzR9.iV_w5gOD64qgSTbjto__tHe_MVg65fxPOqReWoHn7yM"
+   const token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NGFiYWQxYzJmNDhjOTE5ZTM2MjRjM2IiLCJuYW1lIjoiQXphbSIsImVtYWlsIjoiYXphbWtoYW01MjUzQGdtYWlsLmNvbSIsInBob25lIjo4Njg2ODY4Njg2OCwiaWF0IjoxNjg5MTM0Mjc2LCJleHAiOjE2ODkxMzc4NzZ9.ohnr6xSBCunvHv0W4joCbJAqWrtKwcbT1GuE_5JGnMg"
 
 //    const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
 
@@ -258,4 +284,4 @@ const searchApi =async(req,resp)=>{
         resp.send(data)
 
 }
-module.exports ={getApi,postApi,putApi,deleteApi,searchApi,Loginapi,sendMail,ForgotPassword,generateotp,Verifyotp, authenticateToken}
+module.exports ={getApi,postApi,putApi,deleteApi,searchApi,Loginapi,sendMail,ForgotPassword,generateotp,Verifyotp, authenticateToken,Fileupload}
